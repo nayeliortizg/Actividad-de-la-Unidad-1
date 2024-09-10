@@ -24,3 +24,5 @@ if __name__ == "__main__":
     print(f"Servidor escuchando en el puerto {server_address[1]}")
     server = HTTPServer(("localhost", 8000), WebRequestHandler) # Cambiando 8080 al puerto 8000
     server.serve_forever()
+
+#Sitio Web Dinamico

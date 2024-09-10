@@ -9,20 +9,31 @@ class WebRequestHandler(BaseHTTPRequestHandler):
     def query_data(self):
         return dict(parse_qsl(self.url().query))
 
-    def do_GET(self):
-        self.send_response(200)
-        self.send_header("Content-Type", "text/html")
-        self.end_headers()
-        self.wfile.write(self.get_response().encode("utf-8"))
+def do_GET(self):
+    # Registro de datos de la solicitud
+    host = self.headers.get('Host')
+    user_agent = self.headers.get('User-Agent')
+    path = self.path
 
-    def get_response(self):
-        return f"""
-    <h1> Hola Web </h1>
-    <p> URL Parse Result : {self.url()}         </p>
-    <p> Path Original: {self.path}         </p>
-    <p> Headers: {self.headers}      </p>
-    <p> Query: {self.query_data()}   </p>
-"""
+    # Preparar respuesta
+    self.send_response(200)
+    self.send_header('Content-Type', 'text/html')
+    self.send_header('Server', 'SimpleHTTPServer')
+    self.send_header('Date', self.date_time_string())
+    self.end_headers()
+
+    # Registro de datos de la respuesta
+    content_type = 'text/html'
+    server = 'SimpleHTTPServer'
+    date = self.date_time_string()
+
+    print(f"Request Headers:\nHost: {host}\nUser-Agent: {user_agent}\nPath: {path}")
+    print(f"Response Headers:\nContent-Type: {content_type}\nServer: {server}\nDate: {date}")
+
+    # Enviar respuesta
+    self.wfile.write(b"<html><body><h1>Hola Mundo by Nayeli Ortiz Garcia 21210406</h1></body></html>")
+
+    
 
 
 if __name__ == "__main__":

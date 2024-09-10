@@ -1,5 +1,6 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import parse_qsl, urlparse
+from urllib.parse import urlparse, parse_qs
 
 
 class WebRequestHandler(BaseHTTPRequestHandler):
@@ -10,28 +11,20 @@ class WebRequestHandler(BaseHTTPRequestHandler):
         return dict(parse_qsl(self.url().query))
 
 def do_GET(self):
-    # Registro de datos de la solicitud
-    host = self.headers.get('Host')
-    user_agent = self.headers.get('User-Agent')
-    path = self.path
+    parsed_url = urlparse(self.path)
+    path = parsed_url.path
+    query_params = parse_qs(parsed_url.query)
+    autor = query_params.get('autor', ['desconocido'])[0]
 
-    # Preparar respuesta
+    if path == '/proyecto/web-uno':
+        response = f"<h1>Proyecto: web-uno Autor: {autor}</h1>"
+    else:
+        response = "<h1>404 Not Found</h1>"
+
     self.send_response(200)
     self.send_header('Content-Type', 'text/html')
-    self.send_header('Server', 'SimpleHTTPServer')
-    self.send_header('Date', self.date_time_string())
     self.end_headers()
-
-    # Registro de datos de la respuesta
-    content_type = 'text/html'
-    server = 'SimpleHTTPServer'
-    date = self.date_time_string()
-
-    print(f"Request Headers:\nHost: {host}\nUser-Agent: {user_agent}\nPath: {path}")
-    print(f"Response Headers:\nContent-Type: {content_type}\nServer: {server}\nDate: {date}")
-
-    # Enviar respuesta
-    self.wfile.write(b"<html><body><h1>Hola Mundo by Nayeli Ortiz Garcia 21210406</h1></body></html>")
+    self.wfile.write(response.encode())
 
     
 

@@ -11,21 +11,18 @@ class WebRequestHandler(BaseHTTPRequestHandler):
         return dict(parse_qsl(self.url().query))
 
 def do_GET(self):
-    parsed_url = urlparse(self.path)
-    path = parsed_url.path
-    query_params = parse_qs(parsed_url.query)
-    autor = query_params.get('autor', ['desconocido'])[0]
-
-    if path == '/proyecto/web-uno':
-        response = f"<h1>Proyecto: web-uno Autor: {autor}</h1>"
+    if self.path == '/':
+        try:
+            with open('home.html', 'r') as file:
+                content = file.read()
+            self.send_response(200)
+            self.send_header('Content-Type', 'text/html')
+            self.end_headers()
+            self.wfile.write(content.encode())
+        except FileNotFoundError:
+            self.send_error(404, "File Not Found")
     else:
-        response = "<h1>404 Not Found</h1>"
-
-    self.send_response(200)
-    self.send_header('Content-Type', 'text/html')
-    self.end_headers()
-    self.wfile.write(response.encode())
-
+        self.send_error(404, "File Not Found")
     
 
 
